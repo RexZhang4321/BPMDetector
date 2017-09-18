@@ -1,0 +1,1 @@
+data class BeatInfo(val position: Int, val volume: Float)
