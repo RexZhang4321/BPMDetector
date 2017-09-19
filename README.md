@@ -7,3 +7,4 @@ You need the following library to make it work:
 - `TarsosDSP`
 
 Currently I just support to detect BPM of any song in AAC(.m4a) format. Will support more formats in the future.
+

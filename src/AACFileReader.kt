@@ -5,15 +5,25 @@ import java.io.ByteArrayOutputStream
 import java.io.RandomAccessFile
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
+import javax.sound.sampled.AudioFormat
 
 class AACFileReader : FileReader {
     private var isBigEndian: Boolean = false
+    private var sampleRate: Int = 44100
+    private var signed: Boolean = true
+    private var channels: Int = 2
+    private var bitsPerSample: Int = 16
+
     private val MAX_LEN: Int = 2880000 * 4
 
     override fun readFile(path: String): Array<FloatArray> {
         val file = RandomAccessFile(path, "r")
         val output = decodeAudio(file)
         return getTwoChannels(output)
+    }
+
+    override fun getAudioFormat(): AudioFormat {
+        return AudioFormat(this.sampleRate.toFloat(), this.bitsPerSample, this.channels, this.signed, this.isBigEndian)
     }
 
     private fun decodeAudio(file: RandomAccessFile): ByteArray {
@@ -29,6 +39,9 @@ class AACFileReader : FileReader {
             maxLen += buffer.data.size
         }
         this.isBigEndian = buffer.isBigEndian
+        this.sampleRate = buffer.sampleRate
+        this.bitsPerSample = buffer.bitsPerSample
+        this.channels = buffer.channels
         return byteArrayOutputStream.toByteArray()
     }
 
