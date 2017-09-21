@@ -8,9 +8,7 @@ fun main(args: Array<String>) {
     val path = "/Users/RexZhang/Desktop/test.m4a"
     val gain = GainProcessor(1.0)
     val wsola = WaveformSimilarityBasedOverlapAdd(WaveformSimilarityBasedOverlapAdd.Parameters.slowdownDefaults(1.0, 44100.0))
-    val countBpmDispatcher: AudioDispatcher = AudioDispatcherFactory.fromPipe(path, 44100, 4096, 0, 0.0, 60.0)
-    countBpmDispatcher.addAudioProcessor(BPMCounter())
-    countBpmDispatcher.run()
+    System.out.println(BeatCounter.getBPM(path))
     val dispatcher: AudioDispatcher = AudioDispatcherFactory.fromPipe(path, 44100, wsola.inputBufferSize, wsola.overlap)
     val audioFormat = dispatcher.format
     val audioPlayer = AudioPlayer(audioFormat)

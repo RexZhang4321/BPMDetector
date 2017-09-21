@@ -1,1 +1,0 @@
-data class BpmInfo(var bpm: Float, var count: Int, var volume: Float, var position: Int)

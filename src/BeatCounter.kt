@@ -1,21 +1,18 @@
+import be.tarsos.dsp.io.jvm.AudioDispatcherFactory
 import be.tarsos.dsp.util.BiQuadFilter
 
-class BeatDetector {
+class BeatCounter {
 
     companion object {
         private val MIN_BPM = 90
         private val MAX_BPM = 180
 
         fun getBPM(path: String): Float {
-            try {
-                val aacFileReader = AACFileReader()
-                val audio = aacFileReader.readFile(path)
-                doFilteringForTwoChannels(audio)
-                return countBpm(audio)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-            return 0f
+            val countBpmDispatcher = AudioDispatcherFactory.fromPipe(path, 44100, 4096, 0, 0.0, 60.0)
+            val bpmProcessor = BPMProcessor()
+            countBpmDispatcher.addAudioProcessor(bpmProcessor)
+            countBpmDispatcher.run()
+            return bpmProcessor.bpm
         }
 
         fun getBPM(audio: FloatArray): Float {
@@ -87,12 +84,12 @@ class BeatDetector {
         }
 
         private fun doCounting(beats: MutableList<BeatInfo>): Float {
-            val allBpm = mutableListOf<BpmInfo>()
+            val allBpm = mutableListOf<BPMInfo>()
             for (idx in beats.indices) {
                 val beat = beats[idx]
                 var i = 1
                 while (idx + i < beats.size && 10 > i) {
-                    val bpmInfo = BpmInfo(2646000f / (beats[idx + i].position - beat.position),
+                    val bpmInfo = BPMInfo(2646000f / (beats[idx + i].position - beat.position),
                             1, beat.volume, beat.position)
                     while (bpmInfo.bpm < MIN_BPM) {
                         bpmInfo.bpm *= 2f
