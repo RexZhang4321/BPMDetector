@@ -6,5 +6,4 @@ You need the following library to make it work:
 - `jaad`
 - `TarsosDSP`
 
-Currently I just support to detect BPM of any song in AAC(.m4a) format. Will support more formats in the future.
-
+Use `AudioProcessor` to process all the supported format on your computer (as long as you have corresponding ffmpeg decoders).
